@@ -1,0 +1,131 @@
+/* ======= :ROOT - Paleta de Cores e Fontes Synthwave ======= */
+:root {
+    --color-background: #0d0221;
+    --color-pink: #ff00c1;
+    --color-purple: #9e00ff;
+    --color-cyan: #00c2ff;
+    --color-highlight: #faff00;
+    --font-title: 'Audiowide', cursive;
+    --font-body: 'Share Tech Mono', monospace;
+}
+
+/* ======= Animações ======= */
+@keyframes scanline-animation { 0% { transform: translateY(0); } 100% { transform: translateY(20px); } }
+@keyframes title-pulse { 50% { text-shadow: 0 0 5px #fff, 0 0 15px #fff, 0 0 25px var(--color-cyan), 0 0 35px var(--color-cyan); } }
+@keyframes glitch-hover { 0%{transform:translate(0)} 20%{transform:translate(-2px,2px)} 40%{transform:translate(-2px,-2px)} 60%{transform:translate(2px,2px)} 80%{transform:translate(2px,-2px)} 100%{transform:translate(0)} }
+@keyframes task-enter {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ======= Estrutura Geral e Fundo de Herói ======= */
+body {
+    font-family: var(--font-body); margin: 0; padding: 20px; color: #f0f0f0;
+    background-color: var(--color-background);
+    background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/12cbe8a4-f55c-4b40-85bb-d8e1405e7b84/djcf0h0-5714a1f4-2e8e-40d6-aa4f-caa8ea8d75cc.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzEyY2JlOGE0LWY1NWMtNGI0MC04NWJiLWQ4ZTE0MDVlN2I4NFwvZGpjZjBoMC01NzE0YTFmNC0yZThlLTQwZDYtYWE0Zi1jYWE4ZWE4ZDc1Y2MuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.2A1nUGCYfvoD5fgG6FMI7QnBc-goZJLRgkrEav-0NGM');
+    background-size: cover; background-position: center bottom; background-attachment: fixed;
+    min-height: 100vh; position: relative;
+}
+
+/* ===== O RESTO DO CÓDIGO PERMANECE IGUAL ===== */
+
+.container { position: relative; z-index: 2; max-width: 800px; margin: 40px auto; background: rgba(13, 2, 33, 0.6); border: 1px solid var(--color-pink); box-shadow: 0 0 25px var(--color-pink); backdrop-filter: blur(5px); padding: 30px; }
+.neon-title { font-family: var(--font-title); font-size: 3.5rem; font-style: italic; text-align: center; color: #fff; margin: 0; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--color-pink), 0 0 30px var(--color-pink); animation: title-pulse 4s ease-in-out infinite alternate; }
+.neon-title.glitch:hover { animation: glitch-hover 0.3s linear, title-pulse 4s ease-in-out infinite alternate; }
+.subtitle { text-align: center; font-size: 1.2rem; color: var(--color-cyan); text-shadow: 0 0 5px var(--color-cyan); margin: 10px 0 40px 0; }
+form { display: flex; gap: 15px; margin-bottom: 30px; }
+input { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid var(--color-purple); color: #fff; padding: 12px; font-family: var(--font-body); font-size: 1rem; transition: all 0.3s; }
+input:focus { outline: none; border-color: var(--color-highlight); box-shadow: 0 0 10px var(--color-highlight); }
+.cta-button { padding: 12px 25px; font-family: var(--font-title); color: var(--color-highlight); background: transparent; border: 2px solid var(--color-highlight); cursor: pointer; text-shadow: 0 0 5px var(--color-highlight); box-shadow: 0 0 10px var(--color-highlight), inset 0 0 5px rgba(250, 255, 0, 0.4); transition: all 0.3s ease; }
+.cta-button:hover { background: var(--color-highlight); color: var(--color-background); transform: scale(1.05); box-shadow: 0 0 25px var(--color-highlight); }
+.neon-divider { border: 0; height: 1px; background-image: linear-gradient(to right, transparent, var(--color-cyan), transparent); margin: 40px 0; }
+.actions { z-index: 2; }
+.actions-btn { background: transparent; border: 1px solid; padding: 5px 10px; font-family: var(--font-body); cursor: pointer; transition: all 0.3s; }
+.edit-btn { color: var(--color-cyan); border-color: var(--color-cyan); }
+.edit-btn:hover { background: var(--color-cyan); color: var(--color-background); box-shadow: 0 0 10px var(--color-cyan); }
+.delete-btn { color: var(--color-pink); border-color: var(--color-pink); margin-left: 10px; }
+.delete-btn:hover { background: var(--color-pink); color: #fff; box-shadow: 0 0 10px var(--color-pink); }
+
+/* ======= LISTA DE TAREFAS - NOVO DESIGN (COMEÇA AQUI) ======= */
+
+ul { list-style: none; padding: 0; }
+
+.task-item {
+    background: rgba(0,0,0,0.4);
+    margin-bottom: 20px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden; /* Essencial para o efeito de scanline */
+    transition: all 0.3s ease-out;
+    animation: task-enter 0.5s ease-out forwards;
+    /* Remove a borda antiga, usaremos pseudo-elementos */
+    border: aqua;
+}
+
+/* A NOVA BORDA HOLOGRÁFICA */
+.task-item::before, .task-item::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px; /* Espessura da borda */
+    background: linear-gradient(90deg, var(--color-cyan), var(--color-pink));
+    transition: transform 0.3s ease-out;
+}
+.task-item::before {
+    top: 0;
+    transform-origin: left;
+}
+.task-item::after {
+    bottom: 0;
+    transform-origin: right;
+}
+
+/* O NOVO HOVER "SCANLINE" */
+.task-item .task-hud-corners::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #fff;
+    box-shadow: 0 0 10px #fff, 0 0 20px #fff;
+    transform: translateY(-50px) scaleX(0); /* Começa fora e invisível */
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.task-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.4);
+}
+/* Faz a scanline varrer a tarefa */
+.task-item:hover .task-hud-corners::before {
+    transform: translateY(120px) scaleX(1); /* Posição final da linha (ajuste se a altura da tarefa for maior) */
+}
+/* Faz as bordas superior e inferior encolherem no hover */
+.task-item:hover::before, .task-item:hover::after {
+    transform: scaleX(0);
+}
+
+.task-content h3 {
+    font-family: var(--font-title);
+    color: #fff;
+    margin: 0 0 8px 0;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+}
+.task-content p {
+    color: rgba(255,255,255,0.7);
+    margin: 0;
+    font-size: 0.9rem;
+    font-family: var(--font-body);
+}
+
+/* ======= (FIM DA SEÇÃO MODIFICADA) ======= */

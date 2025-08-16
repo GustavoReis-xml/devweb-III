@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>N O I T E S D E N E O N</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="scanlines"></div>
+
+<main class="container">
+    <section class="hero-section">
+        <h1 class="neon-title glitch" data-text="TAREFAS NO HORIZONTE">TAREFAS NO HORIZONTE</h1>
+        <p class="subtitle">Organize suas missões ao som dos sintetizadores.</p>
+    </section>
+
+    <form id="taskForm">
+        <input type="text" id="title" placeholder="Título da Missão..." required>
+        <input type="text" id="description" placeholder="Detalhes da Rota..." required>
+        <button type="submit" class="cta-button">ADICIONAR À PISTA</button>
+    </form>
+
+    <hr class="neon-divider">
+
+    <ul id="taskList">
+        <li class="task-item">
+            <div class="task-hud-corners"></div>
+            <div class="task-content">
+                <h3>Escapar da Cidade</h3>
+                <p>Pegar o DeLorean e dirigir pela costa ao pôr do sol.</p>
+            </div>
+            <div class="actions">
+                <button class="actions-btn edit-btn">EDITAR</button>
+                <button class="actions-btn delete-btn">REMOVER</button>
+            </div>
+        </li>
+    </ul>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
