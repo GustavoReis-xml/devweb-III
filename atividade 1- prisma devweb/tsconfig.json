@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es2016",                  /* Define a versão do JavaScript que será gerada */
+    "module": "commonjs",               /* Define o sistema de módulos */
+    "rootDir": "./src",                 /* Pasta raiz dos seus arquivos TypeScript */
+    "outDir": "./dist",                 /* Pasta onde o JavaScript compilado será salvo */
+    "esModuleInterop": true,            /* Permite interoperabilidade entre módulos CommonJS e ES */
+    "forceConsistentCasingInFileNames": true, /* Garante que os nomes dos arquivos sejam consistentes */
+    "strict": true,                     /* Habilita todas as checagens de tipo estritas */
+    "skipLibCheck": true                /* Pula a verificação de tipos em arquivos de declaração (.d.ts) */
+  }
+}

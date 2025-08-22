@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tabela Pessoa
+model Pessoa {
+  id        Int        @id @default(autoincrement())
+  nome      String     @db.VarChar(30)
+  telefones Telefone[] // Uma pessoa pode ter vários telefones
+  carros    PessoaPorCarro[] // Relação com a tabela de associação
+
+  @@map("pessoa")
+}
+
+// Tabela Telefone
+model Telefone {
+  id        Int    @id @default(autoincrement())
+  numero    String @db.VarChar(11)
+  pessoaId  Int
+  pessoa    Pessoa @relation(fields: [pessoaId], references: [id])
+
+  @@map("telefone")
+}
+
+// Tabela Carro
+model Carro {
+  id     Int              @id @default(autoincrement())
+  modelo String           @db.VarChar(20)
+  pessoas PessoaPorCarro[] // Relação com a tabela de associação
+
+  @@map("carro")
+}
+
+// Tabela de associação N:N entre Pessoa e Carro
+model PessoaPorCarro {
+  pessoaId Int
+  carroId  Int
+  pessoa   Pessoa @relation(fields: [pessoaId], references: [id])
+  carro    Carro  @relation(fields: [carroId], references: [id])
+
+  @@id([pessoaId, carroId]) // Chave primária composta
+  @@map("pessoa_por_carro")
+}
