@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conversor de Moeda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Animação do Fundo em Gradiente */
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Animação para o card aparecer */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Animação do Loader */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(-45deg, #6a11cb, #2575fc, #f70c08, #fc6767);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #333;
+    }
+
+    .converter-box {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 90%;
+      max-width: 450px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      box-sizing: border-box; /* Garante que o padding não aumente a largura */
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border-radius: 8px;
+      border: none;
+      background-color: #2575fc;
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 15px rgba(37, 117, 252, 0.4);
+    }
+    
+    button:active {
+        transform: translateY(0);
+        box-shadow: none;
+    }
+    
+    .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #2575fc;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+    }
+
+    #result {
+      margin-top: 30px;
+      font-size: 22px;
+      font-weight: 600;
+      color: #333;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    }
+    
+    #result.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="converter-box">
+    <h1>Conversor de Moeda</h1>
+    <form id="convertForm">
+      <div class="form-row">
+        <input type="number" step="0.01" name="amount" placeholder="Valor" required />
+        <select name="from" required>
+          <option value="" disabled selected>Converter de...</option>
+          <option value="USD">USD - Dólar Americano</option>
+          <option value="EUR">EUR - Euro</option>
+          <option value="BRL">BRL - Real Brasileiro</option>
+          <option value="GBP">GBP - Libra Esterlina</option>
+          <option value="JPY">JPY - Iene Japonês</option>
+        </select>
+        <select name="to" required>
+          <option value="" disabled selected>Para...</option>
+          <option value="BRL">BRL - Real Brasileiro</option>
+          <option value="USD">USD - Dólar Americano</option>
+          <option value="EUR">EUR - Euro</option>
+          <option value="GBP">GBP - Libra Esterlina</option>
+          <option value="JPY">JPY - Iene Japonês</option>
+        </select>
+      </div>
+      <button type="submit">Converter</button>
+    </form>
+    <div id="loader" style="display: none;"></div>
+    <h2 id="result"></h2>
+  </div>
+
+  <script>
+    const convertForm = document.getElementById("convertForm");
+    const resultEl = document.getElementById("result");
+    const loaderEl = document.getElementById("loader");
+
+    convertForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      
+      // 1. Prepara a UI para a conversão
+      loaderEl.innerHTML = '<div class="loader"></div>'; // Mostra o loader
+      loaderEl.style.display = 'block';
+      resultEl.classList.remove('show'); // Esconde o resultado anterior
+      
+      const form = e.target;
+      const amount = form.amount.value;
+      const from = form.from.value;
+      const to = form.to.value;
+      
+      try {
+        const response = await fetch(`/convert?amount=${amount}&from=${from}&to=${to}`);
+        const data = await response.json();
+        
+        // 2. Mostra o resultado ou o erro
+        resultEl.textContent = data.result || data.error;
+
+      } catch (error) {
+        resultEl.textContent = 'Falha na comunicação com o servidor.';
+      } finally {
+        // 3. Limpa a UI e exibe o resultado com animação
+        loaderEl.style.display = 'none';
+        loaderEl.innerHTML = '';
+        resultEl.classList.add('show'); // Adiciona a classe para animar a aparição
+      }
+    });
+  </script>
+</body>
+</html>
