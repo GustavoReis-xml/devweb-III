@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "es6",                     /* Define a versão do JS (ES6 é ótimo) */
+    "module": "commonjs",                /* Usa o sistema de módulos do Node.js */
+    "rootDir": "./src",                  /* Onde está seu código TypeScript [cite: 70] */
+    "outDir": "./dist",                  /* Onde o JS compilado vai sair [cite: 68] */
+    "esModuleInterop": true,             /* Facilita a importação de módulos */
+    "strict": true                       /* Habilita checagens de tipo mais fortes */
+  },
+  "include": ["src/**/*"]                /* Quais pastas o TS deve "assistir" */
+}
