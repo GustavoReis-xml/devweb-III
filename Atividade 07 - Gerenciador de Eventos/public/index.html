@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Eventos - Fatec</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .form-group { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 8px; margin-bottom: 5px; box-sizing: border-box;}
+        button { padding: 10px 15px; background-color: #007BFF; color: white; border: none; cursor: pointer; }
+        button.delete { background-color: #dc3545; }
+        button.edit { background-color: #ffc107; color: black; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .msg { padding: 10px; margin: 10px 0; display: none; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Gerenciador de Eventos</h1>
+
+    <div id="mensagem" class="msg"></div>
+
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 5px;">
+        <h3 id="formTitle">Novo Evento</h3>
+        <input type="hidden" id="eventoId">
+        <div class="form-group">
+            <label>Título*</label>
+            <input type="text" id="titulo" required>
+        </div>
+        <div class="form-group">
+            <label>Descrição</label>
+            <textarea id="descricao"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Data*</label>
+            <input type="date" id="data" required>
+        </div>
+        <div class="form-group">
+            <label>Local*</label>
+            <input type="text" id="local" required>
+        </div>
+        <div class="form-group">
+            <label>Valor (R$)*</label>
+            <input type="number" id="valor" step="0.01" required>
+        </div>
+        <button onclick="salvarEvento()">Salvar</button>
+        <button onclick="limparFormulario()" style="background-color: #6c757d;">Cancelar</button>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>Lista de Eventos</h3>
+        <input type="text" id="busca" placeholder="Pesquisar por título..." oninput="carregarEventos()">
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Título</th>
+                    <th>Local</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaEventos"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/eventos';
+
+        // Carregar eventos ao iniciar
+        document.addEventListener('DOMContentLoaded', () => carregarEventos());
+
+        // Função LEIA (Listar/Pesquisar)
+        async function carregarEventos() {
+            const termo = document.getElementById('busca').value;
+            const url = termo ? `${API_URL}?titulo=${termo}` : API_URL;
+            
+            try {
+                const res = await fetch(url);
+                const eventos = await res.json();
+                const tbody = document.getElementById('tabelaEventos');
+                tbody.innerHTML = '';
+
+                eventos.forEach(evento => {
+                    const dataFormatada = new Date(evento.data).toLocaleDateString('pt-BR');
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${dataFormatada}</td>
+                            <td>${evento.titulo}</td>
+                            <td>${evento.local}</td>
+                            <td>R$ ${evento.valor.toFixed(2)}</td>
+                            <td>
+                                <button class="edit" onclick='preencherEdicao(${JSON.stringify(evento)})'>Editar</button>
+                                <button class="delete" onclick="excluirEvento('${evento._id}')">Excluir</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                mostrarMensagem('Erro ao carregar eventos.', 'error');
+            }
+        }
+
+        // Função CRIAR ou ATUALIZAR
+        async function salvarEvento() {
+            const id = document.getElementById('eventoId').value;
+            const evento = {
+                titulo: document.getElementById('titulo').value,
+                descricao: document.getElementById('descricao').value,
+                data: document.getElementById('data').value,
+                local: document.getElementById('local').value,
+                valor: parseFloat(document.getElementById('valor').value)
+            };
+
+            if (!evento.titulo || !evento.data || !evento.local || !evento.valor) {
+                mostrarMensagem('Preencha os campos obrigatórios.', 'error');
+                return;
+            }
+
+            try {
+                let res;
+                if (id) {
+                    // Atualizar
+                    res = await fetch(`${API_URL}/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(evento)
+                    });
+                } else {
+                    // Criar
+                    res = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(evento)
+                    });
+                }
+
+                if (res.ok) {
+                    mostrarMensagem('Operação realizada com sucesso!', 'success');
+                    limparFormulario();
+                    carregarEventos();
+                } else {
+                    mostrarMensagem('Erro ao salvar evento.', 'error');
+                }
+            } catch (err) {
+                mostrarMensagem('Erro de conexão.', 'error');
+            }
+        }
+
+        // Função EXCLUIR
+        async function excluirEvento(id) {
+            if (confirm('Tem certeza que deseja excluir este evento?')) {
+                try {
+                    const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                    if (res.ok) {
+                        mostrarMensagem('Evento excluído.', 'success');
+                        carregarEventos();
+                    }
+                } catch (err) {
+                    mostrarMensagem('Erro ao excluir.', 'error');
+                }
+            }
+        }
+
+        // Auxiliares
+        function preencherEdicao(evento) {
+            document.getElementById('eventoId').value = evento._id;
+            document.getElementById('titulo').value = evento.titulo;
+            document.getElementById('descricao').value = evento.descricao || '';
+            document.getElementById('data').value = evento.data.split('T')[0];
+            document.getElementById('local').value = evento.local;
+            document.getElementById('valor').value = evento.valor;
+            document.getElementById('formTitle').innerText = 'Editar Evento';
+            window.scrollTo(0, 0);
+        }
+
+        function limparFormulario() {
+            document.getElementById('eventoId').value = '';
+            document.getElementById('titulo').value = '';
+            document.getElementById('descricao').value = '';
+            document.getElementById('data').value = '';
+            document.getElementById('local').value = '';
+            document.getElementById('valor').value = '';
+            document.getElementById('formTitle').innerText = 'Novo Evento';
+        }
+
+        function mostrarMensagem(texto, tipo) {
+            const div = document.getElementById('mensagem');
+            div.innerText = texto;
+            div.className = `msg ${tipo}`;
+            div.style.display = 'block';
+            setTimeout(() => div.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+</html>
